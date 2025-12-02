@@ -2,7 +2,7 @@ import { useState } from "react";
 
 // Initial packing items
 const initialItems = [
-  { id: 1, description: "Shirt", quantity: 5, packed: true },
+  { id: 1, description: "Shshirt", quantity: 5, packed: true },
   { id: 2, description: "Pants", quantity: 2, packed: false },
 ];
 
@@ -26,6 +26,7 @@ function Form({ onAddItem, tripDate, setTripDate }) {
     };
 
     onAddItem(newItem);
+
     setDescription("");
     setQuantity(1);
   }
@@ -34,7 +35,10 @@ function Form({ onAddItem, tripDate, setTripDate }) {
     <form className="add-form" onSubmit={handleSubmit}>
       <h3>What do you need to pack?</h3>
 
-      <select value={quantity} onChange={(e) => setQuantity(Number(e.target.value))}>
+      <select
+        value={quantity}
+        onChange={(e) => setQuantity(Number(e.target.value))}
+      >
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -60,16 +64,24 @@ function Form({ onAddItem, tripDate, setTripDate }) {
   );
 }
 
-function PackingList({ items, onToggleItem, onDecreaseItem }) {
+function PackingList({
+  items,
+  onToggleItem,
+  onDecreaseItem,
+  onIncreaseItem,
+  onDeleteItem,
+}) {
   return (
     <div className="list">
       <ul>
         {items.map((item) => (
           <Item
-            item={item}
             key={item.id}
+            item={item}
             onToggleItem={onToggleItem}
             onDecrease={onDecreaseItem}
+            onIncrease={onIncreaseItem}
+            onDeleteItem={onDeleteItem}
           />
         ))}
       </ul>
@@ -77,7 +89,7 @@ function PackingList({ items, onToggleItem, onDecreaseItem }) {
   );
 }
 
-function Item({ item, onToggleItem, onDecrease }) {
+function Item({ item, onToggleItem, onDecrease, onIncrease, onDeleteItem }) {
   return (
     <li className={item.packed ? "packed" : ""}>
       <input
@@ -90,8 +102,19 @@ function Item({ item, onToggleItem, onDecrease }) {
         {item.description} <strong>x{item.quantity}</strong>
       </span>
 
+      {/* decrease */}
       <button className="qty-btn" onClick={() => onDecrease(item.id)}>
         -
+      </button>
+
+      {/* increase */}
+      <button className="qty-btn" onClick={() => onIncrease(item.id)}>
+        +
+      </button>
+
+      {/* delete */}
+      <button className="delete-btn" onClick={() => onDeleteItem(item.id)}>
+        ❌
       </button>
     </li>
   );
@@ -139,6 +162,7 @@ function App() {
   const [items, setItems] = useState(initialItems);
   const [tripDate, setTripDate] = useState("");
 
+  // toggle packed
   function toggleItem(id) {
     setItems((items) =>
       items.map((item) =>
@@ -147,6 +171,7 @@ function App() {
     );
   }
 
+  // decrease quantity
   function decreaseItem(id) {
     setItems((items) =>
       items
@@ -159,6 +184,18 @@ function App() {
     );
   }
 
+  // increase quantity
+  function increaseItem(id) {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+    );
+  }
+
+  // add new item
   function addItem(newItem) {
     setItems((items) => {
       const existingItem = items.find(
@@ -179,15 +216,24 @@ function App() {
     });
   }
 
+  // delete item
+  function handleDeleteItem(id) {
+    setItems((items) => items.filter((item) => item.id !== id));
+  }
+
   return (
     <div className="app">
       <Logo />
       <Form onAddItem={addItem} tripDate={tripDate} setTripDate={setTripDate} />
+
       <PackingList
         items={items}
         onToggleItem={toggleItem}
         onDecreaseItem={decreaseItem}
+        onIncreaseItem={increaseItem}     // ⭐ FIXED
+        onDeleteItem={handleDeleteItem}
       />
+
       <Stats items={items} tripDate={tripDate} />
     </div>
   );
