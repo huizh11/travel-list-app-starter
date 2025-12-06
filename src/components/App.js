@@ -35,31 +35,40 @@ function Form({ onAddItem, tripDate, setTripDate }) {
     <form className="add-form" onSubmit={handleSubmit}>
       <h3>What do you need to pack?</h3>
 
-      <select
-        value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
-      >
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
+      {/* QUANTITY + ITEM + ADD BUTTON */}
+      <div className="input-row">
+        <select
+          value={quantity}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+        >
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
 
-      <input
-        type="text"
-        placeholder="Item..."
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        autoFocus
-      />
+        <input
+          type="text"
+          placeholder="Item..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          autoFocus
+        />
 
-      {/* TRIP DATE INPUT */}
-      <input
-        type="date"
-        value={tripDate}
-        onChange={(e) => setTripDate(e.target.value)}
-      />
+        <button type="submit" className="add-btn">
+          Add
+        </button>
+      </div>
 
-      <button type="submit">Add</button>
+      {/* DATE INPUT + FORMAT LABEL */}
+      <div className="date-row">
+        <input
+          type="date"
+          value={tripDate}
+          onChange={(e) => setTripDate(e.target.value)}
+        />
+
+        <span className="date-format-label"> Travel Date!</span>
+      </div>
     </form>
   );
 }
@@ -102,17 +111,14 @@ function Item({ item, onToggleItem, onDecrease, onIncrease, onDeleteItem }) {
         {item.description} <strong>x{item.quantity}</strong>
       </span>
 
-      {/* decrease */}
       <button className="qty-btn" onClick={() => onDecrease(item.id)}>
         -
       </button>
 
-      {/* increase */}
       <button className="qty-btn" onClick={() => onIncrease(item.id)}>
         +
       </button>
 
-      {/* delete */}
       <button className="delete-btn" onClick={() => onDeleteItem(item.id)}>
         ❌
       </button>
@@ -162,7 +168,6 @@ function App() {
   const [items, setItems] = useState(initialItems);
   const [tripDate, setTripDate] = useState("");
 
-  // toggle packed
   function toggleItem(id) {
     setItems((items) =>
       items.map((item) =>
@@ -171,7 +176,6 @@ function App() {
     );
   }
 
-  // decrease quantity
   function decreaseItem(id) {
     setItems((items) =>
       items
@@ -184,7 +188,6 @@ function App() {
     );
   }
 
-  // increase quantity
   function increaseItem(id) {
     setItems((items) =>
       items.map((item) =>
@@ -195,7 +198,6 @@ function App() {
     );
   }
 
-  // add new item
   function addItem(newItem) {
     setItems((items) => {
       const existingItem = items.find(
@@ -216,7 +218,6 @@ function App() {
     });
   }
 
-  // delete item
   function handleDeleteItem(id) {
     setItems((items) => items.filter((item) => item.id !== id));
   }
@@ -230,7 +231,7 @@ function App() {
         items={items}
         onToggleItem={toggleItem}
         onDecreaseItem={decreaseItem}
-        onIncreaseItem={increaseItem}     // ⭐ FIXED
+        onIncreaseItem={increaseItem}
         onDeleteItem={handleDeleteItem}
       />
 
